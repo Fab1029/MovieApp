@@ -46,6 +46,8 @@ export default function Index() {
             <SearchBar 
               placeholder= 'Search for a movie'
               onPress={() => router.push('/search')}
+              value=""
+              onChangeText={() => {}}
             />
             <>
               <Text style={{color: 'white', fontSize: 16, marginVertical: 10, fontWeight: 800}}> Lastest Movies</Text>
@@ -84,10 +86,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   imageBackground: {
+    flex:1,
+    zIndex: 0,
     width: '100%',
-    height: '100%',
     resizeMode: 'cover',
-    position: 'absolute',
+    position: 'absolute'
   },
   logoIcon: {
     width: 50,
