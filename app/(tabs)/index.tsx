@@ -1,13 +1,29 @@
+import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import { colors } from "@/constants/colors";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { useRouter } from "expo-router";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { fetchMovies } from "../../services/api";
 
 
 export default function Index() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [movies, setMovies] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadMovies = async() => {
+      const data = await fetchMovies('');
+      setMovies(data);
+    }
+    loadMovies();
+    setLoading(false);
+  }, []);
+
+
 
   return (
     <View style={styles.homeContainer}> 
@@ -18,12 +34,43 @@ export default function Index() {
       >
         <Image source={icons.logo} style={styles.logoIcon}/>
 
-        <View style = {{flex: 1, marginTop: 5}}>
-          <SearchBar 
-            placeholder= 'Search for a movie'
-            onPress={() => router.push('/search')}
+        {loading ? (
+          <ActivityIndicator 
+            size='large'
+            color='#0000ff'
+            style={styles.loadingIndicator}
           />
-        </View>
+        )
+        : (
+          <View style = {{flex: 1, marginTop: 5}}>
+            <SearchBar 
+              placeholder= 'Search for a movie'
+              onPress={() => router.push('/search')}
+            />
+            <>
+              <Text style={{color: 'white', fontSize: 16, marginVertical: 10, fontWeight: 800}}> Lastest Movies</Text>
+              <FlatList
+                data={movies}
+                renderItem={({ item }) => (
+                  <MovieCard
+                    {...item}
+                  />
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                numColumns={3}
+                columnWrapperStyle={{
+                  justifyContent: 'flex-start',
+                  gap: 20,
+                  paddingRight: 5,
+                  marginBottom: 10
+                }}
+                scrollEnabled={false}
+
+              />
+            </>
+          </View>
+        )
+      }
 
       </ScrollView>
 
@@ -39,7 +86,8 @@ const styles = StyleSheet.create({
   imageBackground: {
     width: '100%',
     height: '100%',
-    position: 'absolute'
+    resizeMode: 'cover',
+    position: 'absolute',
   },
   logoIcon: {
     width: 50,
@@ -47,5 +95,9 @@ const styles = StyleSheet.create({
     marginTop: 30,
     resizeMode: 'contain',
     marginHorizontal: 'auto'
+  },
+  loadingIndicator: {
+    marginTop: 10,
+    alignSelf: 'center'
   }
 })
