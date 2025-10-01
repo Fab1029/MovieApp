@@ -23,8 +23,6 @@ export default function Index() {
     setLoading(false);
   }, []);
 
-
-
   return (
     <View style={styles.homeContainer}> 
       <Image source={images.bg} style={styles.imageBackground}/>

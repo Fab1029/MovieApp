@@ -1,3 +1,5 @@
+import { supabase } from './supabase';
+
 export const TMBD_CONFIG = {
     BASE_URL: 'https://api.themoviedb.org/3',
     API_KEY: process.env.EXPO_PUBLIC_MOVIE_API_KEY,
@@ -28,3 +30,66 @@ export const fetchMovies = async(query: string) => {
     }
     
 }
+
+export const fecthMovieMetrics = async(movie: Movie) => {
+    try {
+        const {data: metrics, error} = await supabase
+            .from('metrics')
+            .select('*')
+            .eq('movie_id', movie.id)
+            .single();
+        
+        if(error) {
+            return null;
+        }
+
+        return metrics;
+
+    }catch(err) {
+        return null;
+        
+    }
+}
+
+export const updateSearchCount = async (query: string, movie: Movie) => {
+    const metrics: TrendingMovie = await fecthMovieMetrics(movie);
+
+    try{
+        if (metrics) {
+            const {data, error} = await supabase
+                .from('metrics')
+                .update({count: metrics.count + 1})
+                .eq("id", metrics.id);
+            
+            if(error) {
+                return null;
+            }
+
+            return data;
+
+        }
+        else {
+            const new_metric: TrendingMovie = {
+                searchTerm: query,
+                count: 1,
+                poster_url: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+                movie_id: movie.id,
+                title: movie.title
+            }
+
+            const { data, error } = await supabase
+                .from('metrics')
+                .insert([new_metric])
+                .select();
+            
+            if(error) {
+                return null
+            }
+
+            return data
+        }
+    }catch(err) {
+        return null;
+    }
+}
+

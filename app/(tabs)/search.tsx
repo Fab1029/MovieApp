@@ -5,7 +5,7 @@ import { icons } from '@/constants/icons'
 import { images } from '@/constants/images'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, View } from 'react-native'
-import { fetchMovies } from '../../services/api'
+import { fetchMovies, updateSearchCount } from '../../services/api'
 
 const search = () => {
   const [query, setQuery] = useState('');
@@ -13,17 +13,30 @@ const search = () => {
   const [movies, setMovies] = useState<any[]>([]);
 
   useEffect(() => {
+    const fetchInitialMovies = async () => {
+      const data = await fetchMovies('');
+      setMovies(data);
+      setLoading(false);
+    };
+
+    fetchInitialMovies();
+  }, []);
+
+  useEffect(() => {
     const timeID = setTimeout(async () => {
       const data = await fetchMovies(query);
+      
       setMovies(data);
       setLoading(false);  
-    }, 500);
+
+      if (query && data.length > 0)
+        updateSearchCount(query, data[0]);
+
+    }, 1500);
 
     return () => clearTimeout(timeID);
     
   }, [query]);
-
-  
 
   return (
     <View style={{flex: 1, backgroundColor: colors.primary}}>
