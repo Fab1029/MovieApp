@@ -1,25 +1,34 @@
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
+import TrendingCard from "@/components/TrendingCard";
 import { colors } from "@/constants/colors";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import { fetchMovies } from "../../services/api";
+import { fetchMovies, fetchTrendingMovies } from "../../services/api";
 
 
 export default function Index() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [movies, setMovies] = useState<any[]>([]);
+  const [trendingMovies, setTrendingMovies] = useState<any[]>([]);
 
   useEffect(() => {
     const loadMovies = async() => {
       const data = await fetchMovies('');
       setMovies(data);
     }
+
+    const loadTrendingMovies = async() => {
+      const data = await fetchTrendingMovies();
+      setTrendingMovies(data);
+    }
+
     loadMovies();
+    loadTrendingMovies();
     setLoading(false);
   }, []);
 
@@ -44,13 +53,31 @@ export default function Index() {
             <SearchBar 
               placeholder= 'Search for a movie'
               onPress={() => router.push('/search')}
-              value=""
-              onChangeText={() => {}}
             />
             <>
+              {trendingMovies.length > 0 && (
+                <View>
+                  <Text style={{color: 'white', fontSize: 16, fontWeight: 800}}>
+                    Trending Movies
+                  </Text>
+                  
+                  <FlatList
+                    data={trendingMovies}
+                    renderItem={({ item, index }) => (
+                      <TrendingCard movie={item} index={index}/>
+                    )}
+                    keyExtractor={(item) => item.movie_id.toString()}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    ItemSeparatorComponent={() => <View style={{ width: 18 }} />}
+                    contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 20 }}
+                  />
+                </View>
+              )}
               <Text style={{color: 'white', fontSize: 16, marginVertical: 10, fontWeight: 800}}> Lastest Movies</Text>
               <FlatList
                 data={movies}
+                style={{padding:5}}
                 renderItem={({ item }) => (
                   <MovieCard
                     {...item}

@@ -93,3 +93,23 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
     }
 }
 
+export const fetchTrendingMovies = async() => {
+    try {
+        const {data: trending_movies, error} = await supabase
+            .from('metrics')
+            .select('*')
+            .order("count", {ascending: false})
+            .limit(5);
+            
+        if(error) {
+            return [];
+        }
+
+        return trending_movies;
+
+    }catch(err) {
+        return [];
+        
+    }
+}
+
