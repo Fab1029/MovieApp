@@ -31,6 +31,26 @@ export const fetchMovies = async(query: string) => {
     
 }
 
+export const fetchMovieDetails = async(movieId: string) => {
+    try{
+        const response = await fetch(`${TMBD_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMBD_CONFIG.API_KEY}`, {
+            method: 'GET',
+            headers: TMBD_CONFIG.headers,
+        });
+
+        if(!response.ok) {
+            throw new Error('Failed to fetch movie details')
+        }
+
+        const data = await response.json();
+
+        return data;
+        
+    }catch(err) {
+        throw new Error('Failed to fetch movie details')
+    }
+}
+
 export const fecthMovieMetrics = async(movie: Movie) => {
     try {
         const {data: metrics, error} = await supabase

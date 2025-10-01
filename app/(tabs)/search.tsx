@@ -32,7 +32,7 @@ const search = () => {
       if (query && data.length > 0)
         updateSearchCount(query, data[0]);
 
-    }, 1500);
+    }, 1100);
 
     return () => clearTimeout(timeID);
     

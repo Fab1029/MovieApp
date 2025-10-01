@@ -11,7 +11,7 @@ const TrendingCard = ({movie:{movie_id, title, poster_url}, index}: TrendingCard
                 source={{uri: poster_url}}
                 style={{width: 100, height:150, borderRadius: 10}}
             />
-            <View style={{position: 'absolute', bottom: -20, left:-10}}>
+            <View style={{position: 'absolute', bottom: 13, left:-10}}>
                 <Text
                     style={{
                     fontWeight: 900,
@@ -25,8 +25,10 @@ const TrendingCard = ({movie:{movie_id, title, poster_url}, index}: TrendingCard
                     {index + 1} 
                 </Text>
             </View>
+            <Text style={{color:'white', fontSize: 10, fontWeight: 800, marginTop:5}} numberOfLines={2}>
+                {title}
+            </Text>
         </TouchableOpacity>
-
     </Link>
   )
 }

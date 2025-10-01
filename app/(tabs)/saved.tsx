@@ -1,10 +1,15 @@
+import { colors } from '@/constants/colors'
+import { icons } from '@/constants/icons'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 
 const saved = () => {
   return (
-    <View>
-      <Text>saved</Text>
+    <View style={{backgroundColor: colors.primary, flex:1}}>
+      <Image
+        source={icons.save}
+        style={{margin: 'auto'}}
+      />
     </View>
   )
 }
